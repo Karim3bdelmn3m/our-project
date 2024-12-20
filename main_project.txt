@@ -25,7 +25,7 @@ class SteganographyTool:
         tk.Label(self.root, text="Steganography Tool", font=("Helvetica", 16, "bold")).pack(pady=20)
         tk.Label(self.root, text="Choose a Category", font=("Helvetica", 12)).pack(pady=10)
 
-        tk.Button(self.root, text="Audio", font=("Helvetica", 12), width=20, command=lambdaself.tool_page("Audio")).pack(pady=5)
+        tk.Button(self.root, text="Audio", font=("Helvetica", 12), widthcommand=lambdaself.tool_page("Audio")).pack(pady=5)
         tk.Button(self.root, text="Video", font=("Helvetica", 12), width=20, command=lambda: self.tool_page("Video")).pack(pady=5)
         tk.Button(self.root, text="Text", font=("Helvetica", 12), width=20, command=lambda: self.tool_page("Text")).pack(pady=5)
         tk.Button(self.root, text="Image", font=("Helvetica", 12), width=20, command=lambda: self.tool_page("Image")).pack(pady=5)
