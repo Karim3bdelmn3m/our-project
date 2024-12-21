@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """
 Created on Sat Dec 14 14:15:54 2024
@@ -247,4 +248,5 @@ class SteganographyTool:
 if __name__ == "__main__":
     root = tk.Tk()
     app = SteganographyTool(root)
+>>>>>>> 2cd99753b3c818af539f93966b9bff4636a44ca7
     root.mainloop()
