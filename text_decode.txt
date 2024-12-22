@@ -1,0 +1,20 @@
+def decode_from_text(encoded_text):
+    message_bin = ''
+    
+    for char in encoded_text:
+        # استخراج البت الأقل أهمية (LSB)
+        message_bin += str(ord(char) & 1)
+
+    # تحويل البنية الثنائية إلى نص
+    message = ''
+    for i in range(0, len(message_bin), 8):
+        byte = message_bin[i:i+8]
+        if len(byte) < 8:  # إذا كانت البنية الثنائية غير مكتملة
+            break
+        message += chr(int(byte, 2))
+
+        # التحقق من فاصل المسافة
+        if message.endswith(' '):
+            break
+
+    return message.strip()
