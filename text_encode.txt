@@ -1,0 +1,18 @@
+def encode_in_text(text, message):
+    # تحويل الرسالة إلى بنية ثنائية
+    message = message + ' '  # إضافة فراغ كفاصل
+    message_bin = ''.join(format(ord(c), '08b') for c in message)
+    
+    encoded_text = text
+    message_idx = 0
+
+    # دمج البتات الأقل أهمية (LSB) من الرسالة في النص
+    encoded_text_list = list(encoded_text)
+    for i in range(len(encoded_text_list)):
+        if message_idx < len(message_bin):
+            char = encoded_text_list[i]
+            # دمج LSB في النص
+            encoded_text_list[i] = chr((ord(char) & 0xFE) | int(message_bin[message_idx]))
+            message_idx += 1
+    
+    return ''.join(encoded_text_list)
