@@ -1,0 +1,34 @@
+import cv2
+import numpy as np
+
+def decode_from_video(video_path):
+    # قراءة الفيديو
+    video = cv2.VideoCapture(video_path)
+    
+    # الحصول على خصائص الفيديو
+    frame_count = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+    
+    # استخراج الرسالة المخفية
+    message_bin = ''
+    while True:
+        ret, frame = video.read()
+        if not ret:
+            break
+
+        # تحويل الإطار إلى مصفوفة من الأعداد
+        frame_data = np.array(frame)
+        
+        # استخراج البتات الأقل أهمية (LSB) من الإطار
+        for i in range(frame_data.shape[0]):
+            for j in range(frame_data.shape[1]):
+                for k in range(3):  # نمر على القنوات الثلاثة (RGB)
+                    message_bin += str(frame_data[i, j, k] & 1)  # استخراج LSB
+
+        # التحقق من وجود رسالة مخفية باستخدام فاصل المسافة
+        if len(message_bin) >= 8 and message_bin[-8:] == '00100000':  # إذا كانت البتات تمثل مسافة
+            message = ''.join(chr(int(message_bin[i:i+8], 2)) for i in range(0, len(message_bin)-8, 8))
+            video.release()
+            return message
+
+    video.release()
+    return None
