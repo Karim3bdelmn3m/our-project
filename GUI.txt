@@ -1,0 +1,96 @@
+def __init__(self, root):
+        self.root = root
+        self.root.title("Steganography Tool")
+        self.root.geometry("600x500")
+        
+        self.main_menu()
+
+    def main_menu(self):
+        self.clear_window()
+        tk.Label(self.root, text="Steganography Tool", font=("Helvetica", 16, "bold")).pack(pady=20)
+        tk.Label(self.root, text="Choose a Category", font=("Helvetica", 12)).pack(pady=10)
+
+        tk.Button(self.root, text="Audio", font=("Helvetica", 12), width=20, command=lambda: self.tool_page("Audio")).pack(pady=5)
+        tk.Button(self.root, text="Video", font=("Helvetica", 12), width=20, command=lambda: self.tool_page("Video")).pack(pady=5)
+        tk.Button(self.root, text="Text", font=("Helvetica", 12), width=20, command=lambda: self.tool_page("Text")).pack(pady=5)
+        tk.Button(self.root, text="Image", font=("Helvetica", 12), width=20, command=lambda: self.tool_page("Image")).pack(pady=5)
+
+    def tool_page(self, category):
+        self.clear_window()
+        tk.Label(self.root, text=f"{category} Steganography", font=("Helvetica", 16, "bold")).pack(pady=20)
+
+        tk.Button(self.root, text="Encode", font=("Helvetica", 12), width=20, command=lambda: self.encode_page(category)).pack(pady=10)
+        tk.Button(self.root, text="Decode", font=("Helvetica", 12), width=20, command=lambda: self.decode_page(category)).pack(pady=10)
+
+        tk.Button(self.root, text="Back", font=("Helvetica", 12), command=self.main_menu).pack(pady=20)
+
+    def encode_page(self, category):
+        self.clear_window()
+        tk.Label(self.root, text=f"{category} Encoding", font=("Helvetica", 16, "bold")).pack(pady=10)
+
+        tk.Label(self.root, text="Enter Data to Hide:").pack(pady=5)
+        hidden_message_entry = tk.Entry(self.root, width=40)
+        hidden_message_entry.pack(pady=5)
+
+        tk.Label(self.root, text="Select File Path for Encoding:").pack(pady=5)
+        file_path_entry = tk.Entry(self.root, width=40)
+        file_path_entry.pack(pady=5)
+        tk.Button(self.root, text="Browse", command=lambda: self.browse_file(file_path_entry)).pack(pady=5)
+
+        tk.Label(self.root, text="Enter New File Name and Extension:").pack(pady=5)
+        new_file_entry = tk.Entry(self.root, width=40)
+        new_file_entry.pack(pady=5)
+
+        tk.Button(self.root, text="Encode", font=("Helvetica", 12), command=lambda: self.encode_action(hidden_message_entry.get(), file_path_entry.get(), new_file_entry.get(), category)).pack(pady=10)
+
+        self.back_exit_buttons()
+
+    def decode_page(self, category):
+        self.clear_window()
+        tk.Label(self.root, text=f"{category} Decoding", font=("Helvetica", 16, "bold")).pack(pady=10)
+
+        tk.Label(self.root, text="Choose File to Decode:").pack(pady=5)
+        file_path_entry = tk.Entry(self.root, width=40)
+        file_path_entry.pack(pady=5)
+        tk.Button(self.root, text="Browse", command=lambda: self.browse_file(file_path_entry)).pack(pady=5)
+
+        tk.Button(self.root, text="Decode", font=("Helvetica", 12), command=lambda: self.decode_action(file_path_entry.get(), category)).pack(pady=10)
+
+        self.back_exit_buttons()
+
+    def browse_file(self, entry):
+        file_path = filedialog.askopenfilename()
+        entry.delete(0, tk.END)
+        entry.insert(0, file_path)
+
+    def encode_action(self, hidden_message, file_path, new_file_name, category):
+        if not hidden_message or not file_path or not new_file_name:
+            messagebox.showerror("Error", "All fields are required!")
+            return
+
+        if category == "Image":
+            self.encode_image(hidden_message, file_path, new_file_name)
+        elif category == "Audio":
+            self.encode_audio(hidden_message, file_path, new_file_name)
+        elif category == "Text":
+            self.encode_text(hidden_message, file_path, new_file_name)
+        elif category == "Video":
+            self.encode_video(hidden_message, file_path, new_file_name)
+        
+        messagebox.showinfo("Success", f"Data encoded successfully in {new_file_name}!")
+
+    def decode_action(self, file_path, category):
+        if not file_path:
+            messagebox.showerror("Error", "File path is required!")
+            return
+        decoded_message = ""
+        if category == "Image":
+            decoded_message = self.decode_image(file_path)
+        elif category == "Audio":
+            decoded_message = self.decode_audio(file_path)
+        elif category == "Text":
+            decoded_message = self.decode_text(file_path)
+        elif category == "Video":
+            decoded_message = self.decode_video(file_path)
+        
+        messagebox.showinfo("Decoded Message", decoded_message)
