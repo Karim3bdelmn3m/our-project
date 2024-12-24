@@ -1,0 +1,26 @@
+import cv2
+import numpy as np
+
+def encode_in_image(image_path, message):
+    image = cv2.imread(image_path)
+    message = message + ' '  # Add space as separator
+    message_bin = ''.join(format(ord(c), '08b') for c in message)
+    message_len = len(message_bin)
+    message_idx = 0
+
+    for i in range(image.shape[0]):
+        for j in range(image.shape[1]):
+            pixel = image[i, j]
+            for k in range(3):  # Iterate through RGB channels
+                if message_idx < message_len:
+                    pixel[k] = (pixel[k] & 0xFE) | int(message_bin[message_idx])  # Set LSB to message bit
+                    message_idx += 1
+            image[i, j] = pixel
+            if message_idx >= message_len:
+                break
+        if message_idx >= message_len:
+            break
+
+    encoded_image_path = 'encoded_' + image_path.split('/')[-1]
+    cv2.imwrite(encoded_image_path, image)
+    return encoded_image_path

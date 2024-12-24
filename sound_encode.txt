@@ -1,0 +1,38 @@
+import wave
+import numpy as np
+
+def encode_in_audio(audio_path, message, output_audio_path):
+    # قراءة ملف الصوت
+    audio = wave.open(audio_path, 'rb')
+    
+    # الحصول على إعدادات الملف الصوتي
+    n_channels = audio.getnchannels()
+    sampwidth = audio.getsampwidth()
+    framerate = audio.getframerate()
+    n_frames = audio.getnframes()
+    
+    # تحويل الرسالة إلى بنية ثنائية
+    message = message + ' '  # إضافة فراغ كفاصل
+    message_bin = ''.join(format(ord(c), '08b') for c in message)
+    message_len = len(message_bin)
+    
+    # قراءة البيانات الصوتية
+    audio_frames = np.frombuffer(audio.readframes(n_frames), dtype=np.int16)
+    
+    # إخفاء الرسالة في البتات الأقل أهمية (LSB)
+    message_idx = 0
+    for i in range(len(audio_frames)):
+        if message_idx < message_len:
+            audio_frames[i] = (audio_frames[i] & 0xFFFE) | int(message_bin[message_idx])  # تعيين LSB
+            message_idx += 1
+
+    # كتابة البيانات الصوتية المعدلة في الملف الجديد
+    encoded_audio = wave.open(output_audio_path, 'wb')
+    encoded_audio.setnchannels(n_channels)
+    encoded_audio.setsampwidth(sampwidth)
+    encoded_audio.setframerate(framerate)
+    encoded_audio.writeframes(audio_frames.tobytes())
+    encoded_audio.close()
+    audio.close()
+
+    return output_audio_path

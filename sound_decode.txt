@@ -1,0 +1,27 @@
+import wave
+import numpy as np
+
+def decode_from_audio(audio_path):
+    # قراءة ملف الصوت
+    audio = wave.open(audio_path, 'rb')
+    
+    # الحصول على إعدادات الملف الصوتي
+    n_channels = audio.getnchannels()
+    sampwidth = audio.getsampwidth()
+    framerate = audio.getframerate()
+    n_frames = audio.getnframes()
+    
+    # قراءة البيانات الصوتية
+    audio_frames = np.frombuffer(audio.readframes(n_frames), dtype=np.int16)
+    
+    # استخراج الرسالة المخفية
+    message_bin = ''
+    for i in range(len(audio_frames)):
+        message_bin += str(audio_frames[i] & 1)  # استخراج LSB
+        
+        if len(message_bin) >= 8 and message_bin[-8:] == '00100000':  # البحث عن فاصل المسافة
+            message = ''.join(chr(int(message_bin[i:i+8], 2)) for i in range(0, len(message_bin)-8, 8))
+            return message
+    
+    audio.close()
+    return None
